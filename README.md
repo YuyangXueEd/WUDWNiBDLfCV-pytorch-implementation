@@ -4,7 +4,7 @@
 
 This project is the implementation of [What Uncertainties Do We Need in Bayesian Deep Learning for Computer Vision](https://arxiv.org/abs/1703.04977) on pyTorch with my understanding.
 
-
+**DISCLAIMER: This is NOT the official repo.**
 
 ## Reference
 
