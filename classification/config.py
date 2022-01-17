@@ -23,6 +23,7 @@ parser.add_argument('--drop_rate', type=float, default=0.2)
 parser.add_argument('--classes', type=int, default=10, help="how many classes for the task")
 
 # Train
+parser.add_argument("--is_train", type=bool, default=True)
 parser.add_argument('--epochs', type=int, default=10, help="total training epochs")
 parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
 parser.add_argument("--decay", type=str, default='50-100-150-200')
