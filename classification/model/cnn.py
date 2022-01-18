@@ -1,48 +1,47 @@
-import os
-from importlib import import_module
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-from torch import nn
+
+def conv2d(in_c, out_c, kernel_size, bias=True):
+    return nn.Conv2d(in_c,
+                     out_c,
+                     kernel_size,
+                     padding=(kernel_size // 2),
+                     bias=bias)
 
 
-class SimpleCNN(nn.Module):
-    def __init__(self, classes, wa):
-        super(SimpleCNN, self).__init__()
-        self.classes = classes
-        self.wa = wa
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(
-                in_channels=1,  # input (1, 28, 28)
-                out_channels=16,
-                kernel_size=5,
-                stride=1,
-                # if you want same width and length of this image after Conv2d,
-                # padding=(kernel_size-1)/2 if stride=1
-                padding=2
-            ),  # output (16, 28, 28)
+class CNN(nn.Module):
+    def __init__(self, in_c, n_feats, drop_rate):
+        super(CNN, self).__init__()
+        self.in_c = in_c
+        self.n_feats = n_feats
+        self.drop_rate = drop_rate
+
+        self.conv = nn.Sequential(
+            conv2d(self.in_c, self.n_feats, 5),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),  # output (16, 14, 14)
-            nn.Dropout(0.5)
+            nn.Dropout(self.dropout)
         )
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(
-                in_channels=16,  # input (16, 14, 14)
-                out_channels=32,
-                kernel_size=5,
-                stride=1,
-                padding=2
-            ),  # output (32, 14, 14)
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),  # output (32, 7, 7)
-            nn.Dropout(0.5)
-        )
-        if wa:
-            self.linear = nn.Linear(32 * 7 * 7, self.classes * 2)
-        else:
-            self.linear = nn.Linear(32 * 7 * 7, self.classes)
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = self.conv2(x)
+        x = self.conv(x)
+
+class Flatten(nn.Module):
+    def __init__(self, in_c, classes,  wa):
+        super(Flatten, self).__init__()
+
+        self.in_c = in_c
+        self.classes = classes
+        self.wa = wa
+
+        if(self.wa):
+            self.linear = nn.Linear(self.in_c, self.classes * 2)
+        else:
+            self.linear = nn.Linear(self.in_c, self.classes)
+
+    def forward(self, x):
         # flatten the output of conv2 to (args.batch_size, 32 * 7 * 7)
         x = x.view(x.size(0), -1)
         logit = self.linear(x)

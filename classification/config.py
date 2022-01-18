@@ -19,6 +19,9 @@ parser.add_argument('--batch_size', type=int, default=512, help="Number per batc
 parser.add_argument('--mode', default='normal',
                     choices=['aleatoric', 'epistemic', 'combined', 'normal'], required=True,
                     help='which mode of uncertainty, choose from "aleatoric", "epistemic", "combined", and "normal"')
+parser.add_argument('--in_channels', type=int, default=1)
+parser.add_argument('--n_feats', type=int, default=32)
+parser.add_argument('--var_weight', type=float, default=1.)
 parser.add_argument('--drop_rate', type=float, default=0.2)
 parser.add_argument('--classes', type=int, default=10, help="how many classes for the task")
 
