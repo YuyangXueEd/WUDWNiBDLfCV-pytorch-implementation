@@ -29,5 +29,7 @@ class Aleatoric(nn.Module):
         )
         self.model.append(
             cnn.Flatten(self.n_feats * 2 * 7 * 7,
-                        )
+                        self.classes)
         )
+
+        
